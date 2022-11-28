@@ -139,3 +139,9 @@ dmypy.json
 **/*.csv
 **/*.xls
 **/*.xlsx
+
+
+# .DS_Store
+.DS_Store
+*.DS_Store
+**/*.DS_Store
