@@ -9,20 +9,27 @@ import os
 import shutil
 
 os.environ['TESSDATA_PREFIX'] = '/opt/homebrew/Cellar/tesseract/5.2.0/share/tessdata'
-multipliersDict = json.load(open('multipliersDictNew.json'))
+
+importDict = json.load(open('multipliersDictNew.json'))
+multipliersDict={}
+for k in importDict.keys():
+    multipliersDict[k.replace(" ","")] = importDict[k]
+multipliersDict.keys()
+
+
 dataFrameResults = pd.DataFrame()
 
-# print("\n\nINICIANDO A CONVERSÃO DE PDF\n\n")
+print("\n\nINICIANDO A CONVERSÃO DE PDF")
 
-# #Converting PDF's to PNG
-# for file in os.listdir('PDFs'):
-#   if file.split('.')[-1]=='pdf':
-#     print(file)
-#     pdfFile = convert_from_path(f'PDFs/{file}',dpi=300)
+#Converting PDF's to PNG
+for file in os.listdir('PDFs'):
+  if file.split('.')[-1]=='pdf':
+    print(file)
+    pdfFile = convert_from_path(f'PDFs/{file}',dpi=300)
     
-#     for i in range(len(pdfFile)):
-#         # Save pages as images in the pdf
-#         pdfFile[i].save(f'PNGs/{file.split(".")[0]}_page{i}.png', 'PNG')
+    for i in range(len(pdfFile)):
+        # Save pages as images in the pdf
+        pdfFile[i].save(f'PNGs/{file.split(".")[0]}_page{i}.png', 'PNG')
 
 
 # 
@@ -33,7 +40,7 @@ dataFrameResults = pd.DataFrame()
 print("\n\nINICIANDO A LEITURA DE IMAGENS")
 
 whitelist = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÇÁÉÍÓÚÃÕÂÊÎÔÛ-/'
-blacklist = 'abcdefghijklmnopqrstuvwxyzçáéíóúãõâêîôû*&|º?[]\}{+=˚'
+blacklist = 'abcdefghijklmnopqrstuvwxyzçáéíóúãõâêîôû|º?[]\}{+=˚()[]@#$%^&*;:'
 
 for file in os.listdir('PNGs'):
   if file.split('.')[-1]=='png':
@@ -99,7 +106,7 @@ for file in os.listdir('PNGs'):
                 width+=dfWords['width'][i]
             else:
                 # print(phrase)
-                phrases[phrase.strip()] = {'left':left, 'top':top, 'width':width, 'height':height}
+                phrases[phrase.strip().replace(' ','')] = {'left':left, 'top':top, 'width':width, 'height':height}
 
                 currentKey = dfWords['key'][i]
                 left= dfWords['left'][i]
@@ -109,7 +116,8 @@ for file in os.listdir('PNGs'):
                 phrase = (dfWords['text'][i]+' ')
 
 
-        # print(phrases)
+        # if 'CPF / CNPJ' not in phrases.keys() or 'CMT' not in phrases.keys():
+        #     print(phrases)
 
 
         #Plotting the rectangles over identified terms, using multiplier values 
@@ -138,18 +146,28 @@ for file in os.listdir('PNGs'):
                 yh = int(phrases[i]['top'] + phrases[i]['height'] + multipliersDict[i]['height'])
                 
                 crop_img = img[y:yh, x:xw]
-                if i == "EIXOS":
-                    resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 10  --oem 3 -c tessedit_char_whitelist=0123456789')
+                if i in ["EIXOS","EXERCÍCIO","ANOFABRICAÇÃO","ANOMODELO"]:
+                    resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 10  --oem 3 -c tessedit_char_whitelist=0123456789*')
+                elif i == "DATA":
+                    resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 7  --oem 3 -c tessedit_char_whitelist=0123456789/')
+                elif i == "CPF/CNPJ":
+                    resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 7  --oem 3 -c tessedit_char_whitelist=0123456789/.-')
+                elif i in ["PLACA","CHASSI","LOTAÇÃO"]:
+                    resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 7  --oem 3 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVXWYZ')
                 else:
                     resultsCrop = pytesseract.image_to_data(crop_img, output_type=Output.DICT,lang='por',config=f'--psm 11 --oem 3 -c tessedit_char_blacklist={blacklistCrop}')
                 
-                fieldNameWords = i.split(' ')
+                
                 cropWords = resultsCrop['text']
                 fieldAnswer = ' '.join(cropWords)
                 
                 if i == 'PLACA':
-                    placaReal = fieldAnswer.strip()
+                    placaReal = fieldAnswer.strip().replace('/','').replace('.','')
                     print('Placa real', placaReal)
+
+                elif i == "CPF/CNPJ":
+                    fieldAnswer = fieldAnswer.replace(' ','')
+                    
                 dictDataFrame[str(i).replace('/','-')] = [fieldAnswer.strip()]
                
 
@@ -164,4 +182,4 @@ for file in os.listdir('PNGs'):
         cv2.imwrite(f"Boxes/{placaReal}.png", img2)
         dataFrameResults = pd.concat([dataFrameResults, pd.DataFrame.from_dict(dictDataFrame,orient='columns')], ignore_index = True)
     
-dataFrameResults.to_csv('dfCompiled.csv')
+dataFrameResults.to_csv('dfCompiled.csv',encoding='utf-16',index=False)
