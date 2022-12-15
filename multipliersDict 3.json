@@ -1,0 +1,84 @@
+{"CÓDIGO RENAVAM": {
+    "width":2,
+    "height":4},
+"PLACA": {
+    "width":2.5,
+    "height":2.5},
+"EXERCÍCIO": {
+    "width":1.5,
+    "height":4},
+"ANO FABRICAÇÃO": {
+    "width":1.3,
+    "height":4.7},
+"ANO MODELO": {
+    "width":1.3,
+    "height":4.7},
+"NÚMERO DO CRV": {
+    "width":3,
+    "height":4},
+"CÓDIGO DE SEGURANÇA DO CLA": {
+    "width":1.3,
+    "height":5.5},
+"CAT": {
+    "width":6,
+    "height":3.2},
+"MARCA / MODELO / VERSÃO": {
+    "width":2.5,
+    "height":7},
+"ESPÉCIE / TIPO": {
+    "width":7,
+    "height":5.5},
+"PLACA ANTERIOR / UF": {
+    "width":1.5,
+    "height":6.5},
+"CHASSI": {
+    "width":7,
+    "height":3},
+"COR PREDOMINANTE": {
+    "width":1.1,
+    "height":6.5},
+"COMBUSTÍVEL": {
+    "width":2,
+    "height":5.5},
+"OBSERVACOES DO VEÍCULO": {
+    "width":2.5,
+    "height":2},
+"CATEGORIA": {
+    "width":5.5,
+    "height":3.3},
+"CAPACIDADE": {
+    "width":1.2,
+    "height":7},
+"POTÊNCIA/CILINDRADA": {
+    "width":2,
+    "height":2.5},
+"PESO BRUTO TOTAL": {
+    "width":1.2,
+    "height":4.2},
+"MOTOR": {
+    "width":6,
+    "height":4.4},
+"CMT": {
+    "width":3,
+    "height":4.5},
+"EIXOS": {
+    "width":1.3,
+    "height":4.5},
+"LOTAÇÃO": {
+    "width":1.2,
+    "height":3},
+"CARROCERIA": {
+    "width":6,
+    "height":4.5},
+"NOME": {
+    "width":14,
+    "height":4},
+"CPF / CNPJ": {
+    "width":4.5,
+    "height":4.2},
+"LOCAL": {
+    "width":8,
+    "height":3.1},
+"DATA": {
+    "width":5,
+    "height":7}}
